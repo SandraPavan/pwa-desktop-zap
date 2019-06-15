@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <title>balta.io</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#8627d2" />
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='description' content='Aprenda PWA com balta.io'>
+
+    <link rel='canonical' href='https://balta-io-1981.azurewebsites.net/'>
+
+    <meta name='mobile-web-app-capable' content='yes'>
+    <meta name='apple-mobile-web-app-capable' content='yes'>
+    <meta name='application-name' content='balta.io'>
+    <meta name='apple-mobile-web-app-status-bar-style' content='black'>
+    <meta name='apple-mobile-web-app-title' content='balta.io'>
+    <link rel='icon' sizes='192x192' href='/images/icons/icon-192x192.png'>
+    <link rel='apple-touch-icon' href='/images/icons/icon-192x192.png'>
+    <meta name='msapplication-TileImage' content='/images/icons/icon-144x144.png'>
+    <meta name='msapplication-TileColor' content='#8627d2'>
+
+    <link async="true" href="https://fonts.googleapis.com/css?family=Montserrat:100,100i,200,200i,300,300i" rel="stylesheet">
+    <link async="true" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+    <link async="true" rel="stylesheet" href="styles.css">
+</head>
+
+<body class="background">
+    <main>
+        <img src="images/logo-2-branco.png" width="350" alt="balta.io" class="animated pulse infinite">
+        <br><br>
+        <a id="btnAddToHomeScreen">ADICIONAR A TELA INICIAL</a>
+    </main>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js', {
+                    scope: '/'
+                })
+                .then(function (registration) {
+                    console.log('Service Worker Registered');
+                });
+            navigator.serviceWorker.ready.then(function (registration) {
+                console.log('Service Worker Ready');
+            });
+        }
+        var deferredPrompt;
+        window.addEventListener('beforeinstallprompt', function (e) {
+            console.log('beforeinstallprompt Event fired');
+            //e.preventDefault();
+            deferredPrompt = e;
+            return false;
+        });
+        btnAddToHomeScreen.addEventListener('click', function () {
+            if (deferredPrompt !== undefined) {
+                // The user has had a postive interaction with our app and Chrome
+                // has tried to prompt previously, so let's show the prompt.
+                deferredPrompt.prompt();
+                // Follow what the user has done with the prompt.
+                deferredPrompt.userChoice.then(function (choiceResult) {
+                    console.log(choiceResult.outcome);
+                    if (choiceResult.outcome == 'dismissed') {
+                        console.log('User cancelled home screen install');
+                    } else {
+                        console.log('User added to home screen');
+                    }
+                    // We no longer need the prompt.  Clear it up.
+                    deferredPrompt = null;
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
